@@ -322,7 +322,7 @@ def get_community_data(target_zip):
 # Extract age demographics from the 'resp' JSON object
 # Provides a pie chart
 #---------------------------------------------------------------#
-def age_demographics_zip(resp):
+def age_demographics_zip(resp,target_zip):
     resp_keys = list(resp['response'].keys())
     if 'result' not in resp_keys: #check if there is data in 'resp' 
         result = 2       
