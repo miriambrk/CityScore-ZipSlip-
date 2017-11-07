@@ -73,11 +73,11 @@ def pie_plot(rst):
     labels = pie_df.index
 
     fig = plt.figure(figsize = [10,10])
-    plt.pie(pie_df, shadow=True, startangle=140, labels = labels, labeldistance=1.025, autopct="%1.1f%%", pctdistance = .95, textprops = {"fontsize": 12})
+    plt.pie(pie_df, shadow=True, startangle=140, labels = labels, labeldistance=1.025, autopct="%1.1f%%", pctdistance = .65, textprops = {"fontsize": 12})
 
     plt.axis("equal")
     plt.title("% of Points of Interest")
-    plt.savefig("test.png")
+    plt.savefig("Points_of_Interest_PieChart.png")
     plt.show()
 
 
@@ -134,6 +134,7 @@ def census_plot(pop_est,county_name,state_name):
     plt.figtext(0.91,0.45,diff_str,fontsize=12)
     plt.title("Census Population Estimates (%s County, %s)"%(county_name,state_name), fontsize = 14)
     plt.ylabel("Population", fontsize=14)
+    plt.savefig("Population_Change_LineGraph.png")
     return plt.show()
 
 #---------------------------------------------------------------#
@@ -378,7 +379,7 @@ def age_demographics_zip(resp, target_zip):
         plt.pie(grouped_age_df['Count'], shadow=True, startangle=140,explode = explode_params,
                 textprops={"fontsize": 12},labels = grouped_age_df['Groups'],autopct="%1.1f%%", pctdistance = .65)
         plt.title("Age Groups for zip code %s\nin %s" %(target_zip,county_name))
-    #     plt.savefig("Age_Demographics_PieChar.png")
+        plt.savefig("Age_Demographics_PieChart.png")
         return plt.show()
 
 #---------------------------------------------------------------#
