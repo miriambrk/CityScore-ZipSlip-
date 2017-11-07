@@ -290,6 +290,7 @@ def plot_homes(df, zipc, periods):
     plt.ylabel("Home Prices ($)")
     plt.title("%s Home Sales 2014-2017" % zipc)
     #save the plot??
+    plt.savefig("Home_Prices_LineGraph.png")
     plt.show()
     
     #plot the monthly rentals
@@ -301,6 +302,7 @@ def plot_homes(df, zipc, periods):
     plt.plot(x_axis, y_axis)
     plt.ylabel("Montly Rents ($)")
     plt.title("%s Monthly Rents 2014-2017" % zipc)
+    plt.savefig("Rent_Prices_LineGraph.png")
     plt.show()
 
 
