@@ -375,7 +375,8 @@ def age_demographics_zip(resp, target_zip):
         explode_params[max_age] = 0.2
         # Plot pie chart 
         fig = plt.figure(figsize = [10,10])
-        plt.pie(grouped_age_df['Count'], shadow=True, startangle=140,explode = explode_params,labels = grouped_age_df['Groups'],autopct="%1.1f%%", pctdistance = .65)
+        plt.pie(grouped_age_df['Count'], shadow=True, startangle=140,explode = explode_params,
+                textprops={"fontsize": 12},labels = grouped_age_df['Groups'],autopct="%1.1f%%", pctdistance = .65)
         plt.title("Age Groups for zip code %s\nin %s" %(target_zip,county_name))
     #     plt.savefig("Age_Demographics_PieChar.png")
         return plt.show()
