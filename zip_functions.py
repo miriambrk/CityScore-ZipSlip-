@@ -73,7 +73,7 @@ def pie_plot(rst):
     labels = pie_df.index
 
     fig = plt.figure(figsize = [10,10])
-    plt.pie(pie_df, shadow=True, startangle=140, labels = labels, autopct="%1.1f%%", pctdistance = .95, textprops = {"fontsize": 12})
+    plt.pie(pie_df, shadow=True, startangle=140, labels = labels, labeldistance=1.025, autopct="%1.1f%%", pctdistance = .95, textprops = {"fontsize": 12})
 
     plt.axis("equal")
     plt.title("% of Points of Interest")
