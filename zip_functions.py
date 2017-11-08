@@ -122,6 +122,7 @@ def census_plot(pop_est,county_name,state_name):
     if _2010 < _2016:
         #
         diff_ = (round(((_2016 - _2010)/ _2016) * 100))
+        pop_growth = ((_2016 - _2010)/ _2016)
         diff_str = "Note:\nIncrease of population by\n" + str(diff_) + "% from 2010 to 2016"
     elif _2010 > _2016:
         diff_ = (round(((_2010 - _2016)/ _2010) * 100))
@@ -135,7 +136,7 @@ def census_plot(pop_est,county_name,state_name):
     plt.title("Census Population Estimates (%s County, %s)"%(county_name,state_name), fontsize = 14)
     plt.ylabel("Population", fontsize=14)
     plt.savefig("Population_Change_LineGraph.png")
-    return plt.show()
+    return plt.show(), pop_growth
 
 #---------------------------------------------------------------#
 # Call this function to capture a DF that includes yearly changes in population
