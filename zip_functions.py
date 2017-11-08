@@ -8,6 +8,7 @@ import numpy as np
 import http.client
 from datetime import datetime
 import time as time
+import csv
 
 # Use the google API to get a list of points of interest
 def barfinder(lat, lng):
@@ -384,8 +385,9 @@ def age_demographics_zip(resp, target_zip):
                 textprops={"fontsize": 12},labels = grouped_age_df['Groups'],autopct="%1.1f%%", pctdistance = .65)
         plt.title("Age Groups for zip code %s\nin %s" %(target_zip,county_name))
         plt.savefig("Age_Demographics_PieChart.png")
-        return plt.show()
+        plt.show()
 
+        return county_name
 #---------------------------------------------------------------#
 
 #get_details(target_zip)  
@@ -475,7 +477,7 @@ def get_school_data(lat, lng, radius):
     cath = 0
     other = 0
     
-    page_size = 20
+    page_size = 50
 
     #Onboard API Key
     onboard_api_key = "727ca1bf9168cb8329806cb7e0eef3f6"
@@ -705,7 +707,13 @@ def compute_score(zip_factors):
 
     #add up all the values to get the score:
     score = RE_home + RE_rent + MH + WK + TX + CM + WW + WS + PG + POI + SCH
-    
+    date = datetime.now().strftime("%m/%d/%y")
+    city = zip_factors['city']
+    zip_code = zip_factors['zip_code']
+    state = zip_factors['state']
+    county = zip_factors['county']
+
+    # print the breakdown of total score
     print("Breakdown of Total Score")
     print()
     print("Average Home Value: %s | Average Rent: %s | Real Estate Market Health: %s" % (round(RE_home*100, 2), round(RE_rent*100,2), round(MH*100,2)))
@@ -718,4 +726,9 @@ def compute_score(zip_factors):
     print()
     print("CitySlip Score: %s" % round(score * 100,2))
 
+    # write the outputs of the score to a csv file
+    f =  open('Output.csv', 'a', newline='')
+    outwriter = csv.writer(f)
+    outwriter.writerow([zip_code, city, county, state, date, round(RE_home*100, 2), round(RE_rent*100, 2), round(MH*100, 2), round(WW*100, 2), round(WS*100, 2), round(SCH*100, 2), round(POI*100, 2), round(PG*100, 2), round(TX*100, 2),round(WK*100, 2), round(CM*100, 2), round(score*100, 2)])
+    f.close()
     return score
