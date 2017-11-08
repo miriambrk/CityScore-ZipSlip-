@@ -5,26 +5,29 @@ Team: Miriam, Kris, Nathan
 
 Description:
 
-For a particular zip code, provide a score (0-100) based on our specific criteria, which include (but not limited to): population size, average age, number of schools, average income, housing/rent prices, plus interesting facts such as the number of bars, restaurants, ATMs. We will compare input city with a city of comparable population size.
+For a particular zip code, provide a score (0-100) based on our specific criteria, which include (but not limited to): population growth, number of schools, housing/rent prices, plus interesting facts such as the number of parks and restaurants, average weather and more. 
 
 Questions to Answer:
 1)	Based on our algorithm and a set of input cities, which is the best to move to?
-2)	What is the average weather/cloud cover – yearly?
-3)	What is average income/age and SD
-4)	Bars per capita
-5)	Number of elementary schools
-6)	How do housing prices compare to other zip codes within the city
+2)	What is the average weather for a zip code?
+3)	How healthy is the real estate market?
+4)	How many parks, grocery stores and liquor stores are there? 
+5)	How many schools are there, and what type are they?
+6)	What does the population growth look like?
 
 Data Sets to Use:
-1)	Census API
+1)	Census API and CSV files
 2)	Google API
-3)	Zillow API
-4)	Set of base city data that we load from these APIs
+3)	Zillow CSV files
+4)  Onboard API 
+5)	Walkability API
+6)  ZIP code file
 
 Rough Breakdown of Tasks:
 1)	Explore Census API and determine which data to extract
-2)	Explore Zillow API 
+2)	Explore Zillow CSV files
 3)	Explore Google API
-4)	Determine weighting factors for scoring zip codes
-5)	Plots for each of the questions
-![image.png](attachment:image.png)
+4)  Explore Onboard API
+5)	Determine weighting factors for scoring zip codes
+6)	Determine which plots would be useful
+
