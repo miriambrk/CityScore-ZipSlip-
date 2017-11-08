@@ -59,7 +59,7 @@ def barfinder(lat, lng):
 
 #---------------------------------------------------------------#
 # pie plot of all of the points of interest as percentage of points of interest
-def pie_plot(rst):
+def pie_plot(rst, target_zip):
     # create a dataframe
     pie_df = pd.DataFrame.from_dict(rst, orient = 'index')
 
@@ -76,7 +76,7 @@ def pie_plot(rst):
     plt.pie(pie_df, shadow=True, startangle=140, labels = labels, labeldistance=1.025, autopct="%1.1f%%", pctdistance = .65, textprops = {"fontsize": 12})
 
     plt.axis("equal")
-    plt.title("% of Points of Interest")
+    plt.title("% of Points of Interest w/in 5 Miles of %s" % target_zip)
     plt.savefig("Points_of_Interest_PieChart.png")
     plt.show()
 
@@ -556,6 +556,25 @@ def get_school_data(lat, lng, radius):
 
 #---------------------------------------------------------------#
 
+def plot_schools(priv, pub, cath, rad, target_zip):
+    #make a bar graph of the schools 
+    colors1=['red','blue','green']
+    sch_x = ["Private", "Public", "Catholic"]
+    sch_y = [priv, pub, cath]        
+    x_axis = np.arange(len(sch_x))
+    plt.bar(x_axis, sch_y, color=colors1,align="edge")
+    tick_locations = [value+0.4 for value in x_axis]
+    plt.xticks(tick_locations, sch_x)
+    plt.xlim(-0.25, len(x_axis))
+    plt.ylim(0, max(sch_y)+0.5)
+    plt.title("Schools within %s Miles of %s" % (rad, target_zip))
+    plt.xlabel("Type of School")
+    plt.ylabel("Quantity")
+    plt.savefig("Schools_BarGraph.png")
+    plt.show()
+        
+#---------------------------------------------------------------#
+
 #function to calculate the city score/zip slip!  Calculate 0-100 score
 # inputs are in the zip_factors_dictionary:
 #   most recent home values and monthly rent for zip code
@@ -633,30 +652,30 @@ def compute_score(zip_factors):
     else:
         CM = 0
 
-    #weather; worth .15 total
+    #weather; worth .1 total
     avg_jan = float(zip_factors['avg_temp_jan'])
     if avg_jan < 20:
         WW = 0
     elif avg_jan < 30:
-        WW = 0.02
+        WW = 0.01
     elif avg_jan < 40:
-        WW = 0.04
+        WW = 0.03
     elif avg_jan < 50:
-        WW = 0.06
+        WW = 0.04
     else:
-        WW = 0.75
+        WW = 0.05
         
     avg_jul = float(zip_factors['avg_temp_jul'])
     if avg_jul > 100:
         WS = 0
     elif avg_jul > 90:
-        WS = 0.02
+        WS = 0.01
     elif avg_jul >80:
-        WS = 0.04
+        WS = 0.03
     elif avg_jul >70:
-        WS = 0.075
+        WS = 0.05
     else:
-        WS = 0.06
+        WS = 0.04
 
 
     #population growth: 0.10 total
@@ -670,11 +689,14 @@ def compute_score(zip_factors):
     else:
         PG = 0.05
 
-    #POIs: total worth: .25 broken down as follows:
-    # grocery: .07, theater: .02, liquor store: .04, gym: .05, park: .05, mall: .02
-    #need to compare the numbers -- compute a ratio? And then assign value
-    
-    POI = 0.25
+    #POIs: total worth: .3 broken down as follows:
+    points_of_interest = float(zip_factors['poi'])
+    if points_of_interest < 400:
+    	POI = .1
+	elif points_of_interest < 800:
+		POI = .2
+	else:
+		POI = .3
     
     #use ratio of private to public schools
     SCH = ((zip_factors['private_schools'] + zip_factors['cath_schools']) / zip_factors['public_schools']) * 0.1
