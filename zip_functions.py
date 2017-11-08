@@ -73,10 +73,10 @@ def pie_plot(rst, target_zip):
     labels = pie_df.index
 
     fig = plt.figure(figsize = [10,10])
-    plt.pie(pie_df, shadow=True, startangle=140, labels = labels, labeldistance=1.025, autopct="%1.1f%%", pctdistance = .65, textprops = {"fontsize": 12})
+    plt.pie(pie_df, shadow=True, startangle=140, labels = labels, labeldistance=1.028, autopct="%1.1f%%", pctdistance = .65, textprops = {"fontsize": 12})
 
     plt.axis("equal")
-    plt.title("% of Points of Interest w/in 5 Miles of %s" % target_zip)
+    plt.title("Pct of Points of Interest w/in 5 Miles of %s" % target_zip)
     plt.savefig("Points_of_Interest_PieChart.png")
     plt.show()
 
@@ -136,7 +136,8 @@ def census_plot(pop_est,county_name,state_name):
     plt.title("Census Population Estimates (%s County, %s)"%(county_name,state_name), fontsize = 14)
     plt.ylabel("Population", fontsize=14)
     plt.savefig("Population_Change_LineGraph.png")
-    return plt.show(), pop_growth
+    plt.show()
+    return pop_growth
 
 #---------------------------------------------------------------#
 # Call this function to capture a DF that includes yearly changes in population
@@ -620,7 +621,7 @@ def compute_score(zip_factors):
     else:
         RE_rent = 0.01 
         
-    #market health is 0-10
+    #market health is 0.05
     MH = (zip_factors['market_health']/10) * .05
 
 
@@ -682,23 +683,21 @@ def compute_score(zip_factors):
     #population growth: 0.10 total
     pop_growth = float(zip_factors['pop_growth'])
     if pop_growth < 0:
-        PG = 0.02
-    elif pop_growth < 0.03:
-        PG = 0.07
-    elif pop_growth < 0.06:
-        PG = 0.1
-    else:
+        PG = 0
+    elif pop_growth >= 0.07:
         PG = 0.05
+    else:
+        PG = 0.1
 
     #POIs: total worth: .3 broken down as follows:
     points_of_interest = float(zip_factors['poi'])
     if points_of_interest < 400:
     	POI = .1
-	elif points_of_interest < 800:
-		POI = .2
-	else:
-		POI = .3
-    
+    elif points_of_interest < 800:
+    	POI = .2
+    else:
+    	POI = .3
+
     #use ratio of private to public schools
     SCH = ((zip_factors['private_schools'] + zip_factors['cath_schools']) / zip_factors['public_schools']) * 0.1
     
@@ -707,10 +706,16 @@ def compute_score(zip_factors):
     #add up all the values to get the score:
     score = RE_home + RE_rent + MH + WK + TX + CM + WW + WS + PG + POI + SCH
     
-    
-    print("RE home: %s, RE_rent: %s, MH: %s, WK: %s, TX: %s" % (RE_home, RE_rent, MH, WK, TX))
-    print("crime: %s, winter: %s, summer: %s, popg: %s, POI: %s, SCH: %s" % (CM, WW, WS, PG, POI, SCH))
-
-    print(score)
+    print("Breakdown of Total Score")
+    print()
+    print("Average Home Value: %s | Average Rent: %s | Real Estate Market Health: %s" % (round(RE_home*100, 2), round(RE_rent*100,2), round(MH*100,2)))
+    print("Average Winter Temp (F): %s | Average Summer Temp (F): %s, " % (round(WW*100,2), round(WS*100,2)))
+    print("Total Schools: %s | Total Points of Interest: %s" % (round(SCH*100,2), round(POI*100,2)))
+    print("Population Growth: %s" % round(PG*100, 2))
+    print("Sales Tax Rate: %s" % round(TX*100,2))
+    print("Walkability: %s" % round(WK*100,2))
+    print("Crime Risk: %s" % round(CM*100,2))
+    print()
+    print("CitySlip Score: %s" % round(score * 100,2))
 
     return score
