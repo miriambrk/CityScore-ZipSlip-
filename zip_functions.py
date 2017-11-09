@@ -258,7 +258,8 @@ def get_home_data(zipc, city, state):
                             periods.append(col_name)
                             #print(col_name, home_value, rent)
                         except:
-                            print("no value for: %s" % col_name)
+                            continue
+                            #print("no value for: %s" % col_name)
                
             except IndexError:
                 next
@@ -267,25 +268,23 @@ def get_home_data(zipc, city, state):
             periods.append(0)
             home_values.append(0)
             monthly_rentals.append(0)
-            print("no home data at all")
+            print("No Home Data Found")
             found = 0
         elif len(monthly_rentals) == 0:
             #monthly_rentals.append(0)
-            print("no rental data at all")
+            print("No Rent Data Found")
             found = 1
             for i in range(0, len(home_values)):
             	monthly_rentals.append(0)
         elif len(home_values) == 0:     
             #home_values.append(0)
-            print("no home value at all")
+            print("No Home Value Data Found")
             found = 2
             for j in range(0, len(monthly_rentals)):
             	home_values.append(0)
                                             
     #store rent and house prices into a DF
-    print(len(monthly_rentals))
-    print(len(home_values))
-    print(len(periods))
+
     zillow_df=pd.DataFrame({"period": periods, 
                         "home_value": home_values,
                         "monthly_rent": monthly_rentals}) 
