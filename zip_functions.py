@@ -78,7 +78,7 @@ def pie_plot(rst, target_zip):
 
     plt.axis("equal")
     plt.title("Pct of Points of Interest w/in 5 Miles of %s" % target_zip)
-    plt.savefig("Points_of_Interest_PieChart.png")
+    plt.savefig("Points_of_Interest_PieChart.png", bbox_inches='tight')
     plt.show()
 
 
@@ -136,7 +136,7 @@ def census_plot(pop_est,county_name,state_name):
     plt.figtext(0.91,0.45,diff_str,fontsize=12)
     plt.title("Census Population Estimates (%s County, %s)"%(county_name,state_name), fontsize = 14)
     plt.ylabel("Population", fontsize=14)
-    plt.savefig("Population_Change_LineGraph.png")
+    plt.savefig("Population_Change_LineGraph.png", bbox_inches='tight')
     plt.show()
     return pop_growth
 
@@ -178,7 +178,6 @@ def get_real_estate_extremes():
 #---------------------------------------------------------------#
 # Find the nearest zipcode to a zipcode missing data
 def find_near_zips(zipc, city, state):
-    
     x = zipcodes.similar_to(zipc[0], 
                     zips=zipcodes.filter_by(zipcodes.list_all(), active=True, city= city, state = state))
     zipps = []
@@ -230,10 +229,9 @@ def get_home_data(zipc, city, state):
                     #print(col_name, home_value, rent)
                 except:
                     print("no value for: %s" % col_name)
-                    
+        found = 3
     except:    
         #find nearby zip codes because there are no rows for the input zip
-        print("except")
         z = find_near_zips(zipc, city, state)
         print(z)
         
@@ -261,7 +259,21 @@ def get_home_data(zipc, city, state):
                
             except IndexError:
                 next
-        
+        #if no data was found, store 0s
+        if len(home_values) == 0 & len(monthly_rentals) == 0:
+            periods.append(0)
+            home_values.append(0)
+            monthly_rentals.append(0)
+            print("no home data at all")
+            found = 0
+        elif len(monthly_rentals) == 0:
+            monthly_rentals.append(0)
+            print("no rental data at all")
+            found = 1
+        else:     
+            home_values.append(0)
+            print("no home value at all")
+            found = 2
                                             
     #store rent and house prices into a DF
     zillow_df=pd.DataFrame({"period": periods, 
@@ -276,37 +288,40 @@ def get_home_data(zipc, city, state):
     home_value = df.iloc[-1]['home_value']
     rent = df.iloc[-1]['monthly_rent']
     
-    return df, periods, home_value, rent
+    return df, periods, home_value, rent, found
 
 #---------------------------------------------------------------#
 
 # Function to plot Zillow home values and monthly rental prices for 2014-2017 quarters
 # Function requires a DF with the Zillow info and the zip code (string)
-def plot_homes(df, zipc, periods):
-    #plot the home values 
-    x_ticks = periods
-    x_axis = np.arange(1,16,1)
-    y_axis = df['home_value']
-    plt.xticks(x_axis, x_ticks, rotation='vertical')
-    plt.legend
-    plt.plot(x_axis, y_axis)
-    plt.ylabel("Home Prices ($)")
-    plt.title("%s Home Sales 2014-2017" % zipc)
-    #save the plot??
-    plt.savefig("Home_Prices_LineGraph.png")
-    plt.show()
+def plot_homes(df, zipc, periods, found):
+    #only plot if there is data
+    if (found == 1) | (found == 3):
+        #plot the home values 
+        x_ticks = periods
+        x_axis = np.arange(1,16,1)
+        y_axis = df['home_value']
+        plt.xticks(x_axis, x_ticks, rotation='vertical')
+        plt.legend
+        plt.plot(x_axis, y_axis)
+        plt.ylabel("Home Prices ($)")
+        plt.title("%s Home Sales 2014-2017" % zipc)
+        #save the plot
+        plt.savefig("Home_Prices_LineGraph.png", bbox_inches='tight')
+        plt.show()
     
-    #plot the monthly rentals
-    x_ticks = periods
-    x_axis = np.arange(1,16,1)
-    y_axis = df['monthly_rent']
-    plt.xticks(x_axis, x_ticks, rotation='vertical')
-    plt.legend
-    plt.plot(x_axis, y_axis)
-    plt.ylabel("Montly Rents ($)")
-    plt.title("%s Monthly Rents 2014-2017" % zipc)
-    plt.savefig("Rent_Prices_LineGraph.png")
-    plt.show()
+    if found > 1:
+        #plot the monthly rentals
+        x_ticks = periods
+        x_axis = np.arange(1,16,1)
+        y_axis = df['monthly_rent']
+        plt.xticks(x_axis, x_ticks, rotation='vertical')
+        plt.legend
+        plt.plot(x_axis, y_axis)
+        plt.ylabel("Montly Rents ($)")
+        plt.title("%s Monthly Rents 2014-2017" % zipc)
+        plt.savefig("Rent_Prices_LineGraph.png", bbox_inches='tight')
+        plt.show()
 
 
 #---------------------------------------------------------------#
@@ -384,7 +399,7 @@ def age_demographics_zip(resp, target_zip):
         plt.pie(grouped_age_df['Count'], shadow=True, startangle=140,explode = explode_params,
                 textprops={"fontsize": 12},labels = grouped_age_df['Groups'],autopct="%1.1f%%", pctdistance = .65)
         plt.title("Age Groups for zip code %s\nin %s" %(target_zip,county_name))
-        plt.savefig("Age_Demographics_PieChart.png")
+        plt.savefig("Age_Demographics_PieChart.png", bbox_inches='tight')
         plt.show()
 
         return county_name
@@ -574,7 +589,7 @@ def plot_schools(priv, pub, cath, rad, target_zip):
     plt.title("Schools within %s Miles of %s" % (rad, target_zip))
     plt.xlabel("Type of School")
     plt.ylabel("Quantity")
-    plt.savefig("Schools_BarGraph.png")
+    plt.savefig("Schools_BarGraph.png", bbox_inches='tight')
     plt.show()
         
 #---------------------------------------------------------------#
@@ -604,24 +619,35 @@ def compute_score(zip_factors):
 
     # compute ratios; closest to 1 is best
     # home and rent each have a max of 0.05
-    home_value_ratio = zip_factors['home_value'] / zip_factors['median_home_value']
-    rent_ratio = zip_factors['rent'] / zip_factors['median_rent']
+    
+    
 
-    #RE_value (home: 0.05; rent: 0.05)
-    if home_value_ratio < 1.3:
-        RE_home = 0.05
-    elif home_value_ratio <= 1.8:
-        RE_home = 0.03
+    #if no home value or rent data, set the scores to a median value but notify user
+    if zip_factors['home_value'] == 0:
+        RE_home = 0.025
+        print("There is no Home Value Data.")
     else:
-        RE_home = 0.01
+        home_value_ratio = zip_factors['home_value'] / zip_factors['median_home_value']
             
-
-    if rent_ratio < 1.3:
-        RE_rent= 0.05
-    elif rent_ratio <= 1.8:
-        RE_rent = 0.03
-    else:
-        RE_rent = 0.01 
+        #RE_value (home: 0.05; rent: 0.05)
+        if home_value_ratio < 1.3:
+            RE_home = 0.05
+        elif home_value_ratio <= 1.8:
+            RE_home = 0.03
+        else:
+            RE_home = 0.01
+            
+    if zip_factors['rent'] == 0:
+        RE_rent = 0.025
+        print("There is no Monthly Rental Data.")
+    else:    
+        rent_ratio = zip_factors['rent'] / zip_factors['median_rent']
+        if rent_ratio < 1.3:
+            RE_rent= 0.05
+        elif rent_ratio <= 1.8:
+            RE_rent = 0.03
+        else:
+            RE_rent = 0.01 
         
     #market health is 0.05
     MH = (zip_factors['market_health']/10) * .05
@@ -700,11 +726,16 @@ def compute_score(zip_factors):
     else:
     	POI = .3
 
-    #use ratio of private to public schools
-    SCH = ((zip_factors['private_schools'] + zip_factors['cath_schools']) / zip_factors['public_schools']) * 0.1
+    #use ratio of private to public schools; 0.1 total
+    if zip_factors['public_schools'] == 0:
+        SCH = 0
+    else:    
+        SCH = ((zip_factors['private_schools'] + zip_factors['cath_schools']) / zip_factors['public_schools']) * 0.1
+        #if ratio of private to public is over 1, then cap the SCH score
+        if SCH > 0.1:
+            SCH = 0.1
     
-    #do we need to factor in age demographics?
-
+    
     #add up all the values to get the score:
     score = RE_home + RE_rent + MH + WK + TX + CM + WW + WS + PG + POI + SCH
     date = datetime.now().strftime("%m/%d/%y")
@@ -717,7 +748,7 @@ def compute_score(zip_factors):
     print("Breakdown of Total Score")
     print()
     print("Average Home Value: %s | Average Rent: %s | Real Estate Market Health: %s" % (round(RE_home*100, 2), round(RE_rent*100,2), round(MH*100,2)))
-    print("Average Winter Temp (F): %s | Average Summer Temp (F): %s, " % (round(WW*100,2), round(WS*100,2)))
+    print("Average Winter Temp (F): %s | Average Summer Temp (F): %s " % (round(WW*100,2), round(WS*100,2)))
     print("Total Schools: %s | Total Points of Interest: %s" % (round(SCH*100,2), round(POI*100,2)))
     print("Population Growth: %s" % round(PG*100, 2))
     print("Sales Tax Rate: %s" % round(TX*100,2))
