@@ -235,7 +235,7 @@ def get_home_data(zipc, city, state):
     except:    
         #find nearby zip codes because there are no rows for the input zip
         z = find_near_zips(zipc, city, state)
-        print(z)
+        #print(z)
         found = 3
         
         p = {}
