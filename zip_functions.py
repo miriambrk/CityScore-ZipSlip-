@@ -120,6 +120,7 @@ def census_plot(pop_est,county_name,state_name):
     pop_len = len(pop_est['Population'])
     _2010 = pop_est['Population'][1]
     _2016 = pop_est['Population'][pop_len -1]
+    pop_growth = 0
     if _2010 < _2016:
         #
         diff_ = (round(((_2016 - _2010)/ _2016) * 100))
@@ -228,12 +229,14 @@ def get_home_data(zipc, city, state):
                     periods.append(col_name)
                     #print(col_name, home_value, rent)
                 except:
-                    print("no value for: %s" % col_name)
+                    #print("no value for: %s" % col_name)
+                    continue
         found = 3
     except:    
         #find nearby zip codes because there are no rows for the input zip
         z = find_near_zips(zipc, city, state)
         print(z)
+        found = 3
         
         p = {}
         for q in z:
@@ -267,15 +270,22 @@ def get_home_data(zipc, city, state):
             print("no home data at all")
             found = 0
         elif len(monthly_rentals) == 0:
-            monthly_rentals.append(0)
+            #monthly_rentals.append(0)
             print("no rental data at all")
             found = 1
-        else:     
-            home_values.append(0)
+            for i in range(0, len(home_values)):
+            	monthly_rentals.append(0)
+        elif len(home_values) == 0:     
+            #home_values.append(0)
             print("no home value at all")
             found = 2
+            for j in range(0, len(monthly_rentals)):
+            	home_values.append(0)
                                             
     #store rent and house prices into a DF
+    print(len(monthly_rentals))
+    print(len(home_values))
+    print(len(periods))
     zillow_df=pd.DataFrame({"period": periods, 
                         "home_value": home_values,
                         "monthly_rent": monthly_rentals}) 
@@ -416,6 +426,9 @@ def get_details(target_zip):
     sales_tax= resp['response']['result']['package']['item'][0]['salestaxrate']
     avg_jan = resp['response']['result']['package']['item'][0]['tmpavejan']
     avg_jul = resp['response']['result']['package']['item'][0]['tmpavejul']
+
+    print("Average Winter Temperature (F): %s" % avg_jan)
+    print("Average Summer Temperature (F): %s" % avg_jul)
             
     return crime, sales_tax, avg_jan, avg_jul
 
@@ -569,7 +582,7 @@ def get_school_data(lat, lng, radius):
         
         else:
             more_schools = False
-   
+    print("\nNumber of Schools")
     print("private: %s, public: %s, catholic: %s, other: %s" % (private, public, cath, other))
     return total_schools, private, public, cath
 
@@ -745,7 +758,7 @@ def compute_score(zip_factors):
     county = zip_factors['county']
 
     # print the breakdown of total score
-    print("Breakdown of Total Score")
+    print("Breakdown of Total Score for %s" % zip_code)
     print()
     print("Average Home Value: %s | Average Rent: %s | Real Estate Market Health: %s" % (round(RE_home*100, 2), round(RE_rent*100,2), round(MH*100,2)))
     print("Average Winter Temp (F): %s | Average Summer Temp (F): %s " % (round(WW*100,2), round(WS*100,2)))
@@ -755,7 +768,7 @@ def compute_score(zip_factors):
     print("Walkability: %s" % round(WK*100,2))
     print("Crime Risk: %s" % round(CM*100,2))
     print()
-    print("CitySlip Score: %s" % round(score * 100,2))
+    print("CitySlip Score (0-100): %s" % round(score * 100,2))
 
     # write the outputs of the score to a csv file
     f =  open('Output.csv', 'a', newline='')
