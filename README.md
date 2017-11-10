@@ -1,27 +1,27 @@
 Overview:
 CitySlip receives a single U.S. zip code as an input and runs analytics against:
-  -Population
-  -Age Demographics
-  -Points of Interest
-  -Walkability
-  -Weather
-  -Schools
-  -Home Value
-  -Rent
-  -Crime Rate
-  -Sales Tax
+  1. Population
+  2. Age Demographics
+  3. Points of Interest
+  4. Walkability
+  5. Weather
+  6. Schools
+  7. Home Value
+  8. Rent
+  9. Crime Rate
+  10. Sales Tax
   
 Requirements:
 Running CitySlip requires the following dependencies:
-requests
-json
-zipcodes
-pandas
-matplotlib.pyplot
-numpy
-http.client
-datetime
-csv
+1. requests
+2. json
+3. zipcodes
+4. pandas
+5. matplotlib.pyplot
+6. numpy
+7. http.client
+8. datetime
+9. csv
 
 Output Files:
 1. Age Demographics Pie Chart
