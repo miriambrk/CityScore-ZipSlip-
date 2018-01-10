@@ -31,3 +31,5 @@ Output Files:
 5. Rent Prices Line Graph
 6. Schools Bar Graph
 7. Output CSV
+
+See Powerpoint presentation in Resources/CityZip_Presentation.pptx
