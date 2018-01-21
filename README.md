@@ -23,6 +23,9 @@ Running CitySlip requires the following dependencies:
 8. datetime
 9. csv
 
+![home prices](Home_Prices_LineGraph.png "Home Prices")
+
+
 Output Files:
 1. Age Demographics Pie Chart
 2. Population Change Line Graph
